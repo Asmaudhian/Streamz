@@ -13,6 +13,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import MainAppBar from './appbar';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
+
 
 const drawerWidth = 240;
 
@@ -39,44 +43,58 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
 }));
 
+
 export default function Layout(props) {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () =>
+      createMuiTheme({
+        palette: {
+          type: prefersDarkMode ? 'dark' : 'light', //change to get dark mode
+        },
+      }),
+    [prefersDarkMode],
+  );
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <MainAppBar />
-      {/* </MainAppBar> */}
-      <Drawer
-        className={classes.drawer}
-        variant="permanent"
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.toolbar} />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <div className={classes.content}>
-        {/* <div className={classes.toolbar} /> */}
-        {props.children}
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <CssBaseline />
+        <MainAppBar />
+        {/* </MainAppBar> */}
+        <Drawer
+          className={classes.drawer}
+          variant="permanent"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.toolbar} />
+          <List>
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <div className={classes.content}>
+          {/* <div className={classes.toolbar} /> */}
+          {props.children}
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
