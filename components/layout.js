@@ -31,8 +31,10 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
   },
   content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
+    // flexGrow: 1,
+    marginTop: 30,
+    padding: theme.spacing(5),
+    paddingRight: 0
   },
   toolbar: theme.mixins.toolbar,
 }));
@@ -72,7 +74,7 @@ export default function Layout(props) {
         </List>
       </Drawer>
       <div className={classes.content}>
-        <div className={classes.toolbar} />
+        {/* <div className={classes.toolbar} /> */}
         {props.children}
       </div>
     </div>

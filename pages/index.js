@@ -1,9 +1,10 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import Container from '@material-ui/core/Container'
 import Layout from '../components/layout'
 import GameCard from '../components/gamecard'
+import apiKeys from '../apiKey'
+import fetch from 'isomorphic-unfetch'
 // import 'typeface-roboto'
 
 const useStyles = makeStyles(theme => ({
@@ -48,10 +49,10 @@ const useStyles = makeStyles(theme => ({
   cardMedia: {
     width: 160
   },
-  baseLayout: {
+  gamesDirectory: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around'
+    width: '100%',
+    flexWrap: 'wrap',
   }
 }))
 
@@ -70,26 +71,42 @@ const featuredPosts = [
   }
 ]
 
-const Blog = () => {
+const Index = (props) => {
   const classes = useStyles()
-
+  console.log(props)
   return (
     <>
       <CssBaseline />
-      <div>
         <Layout>
-          <div className={classes.baseLayout}>
-            <GameCard></GameCard>
-            <GameCard></GameCard>
-            <GameCard></GameCard>
-            <GameCard></GameCard>
-            <GameCard></GameCard>
-            <GameCard></GameCard>
+          <div>
+            <h1>Browse</h1>
+            <div className={classes.gamesDirectory}>
+              {props.games.map(game => (
+                <div key={game.game._id}>
+                  <GameCard game={game}></GameCard>
+                </div>
+              ))}
+            </div>
           </div>
         </Layout>
-      </div>
     </>
   )
 }
 
-export default Blog
+Index.getInitialProps = async function () {
+  let games = await fetch('https://api.twitch.tv/kraken/games/top?limit=50&client_id=' + apiKeys.twitch,
+    {
+      method: 'GET',
+      headers: {
+        'Client-ID': apiKeys.twitch,
+        'Accept': 'application/vnd.twitchtv.v5+json'
+      },
+      mode: 'cors',
+      cache: 'default'
+    });
+  let gamesJson = await games.json();
+  console.log(gamesJson)
+  return { games: gamesJson.top };
+};
+
+export default Index;
