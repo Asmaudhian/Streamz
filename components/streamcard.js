@@ -42,7 +42,7 @@ export default function StreamCard(props) {
     let first = stream.thumbnail_url.replace('{width}', '300');
     let second = first.replace('{height}', '180');
     return (
-        <Link href="/stream/[id]" as={`/stream/${stream.user_id}`}>
+        <Link href={{pathname: "/stream/[id]", query: {streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title}}} as={`/stream/${stream.user_name}`}>
             <Card className={classes.card}>
                 <CardActionArea>
                     <CardMedia
