@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
 
 function connectTwitch() {
     // ADD STATE TOKEN TO PREVENT CSRF ATTACKS
-    open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=' + apiKeys.twitch + '&redirect_uri=http://localhost&scope=user_read')
+    // DO THIS IN BACKEND
+    open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=' + apiKeys.twitch + '&redirect_uri=http://localhost:3000/auth/twitch&scope=user_read')
 }
 
 
