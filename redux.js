@@ -36,3 +36,18 @@ store.dispatch({ type: 'INCREMENT' })
 // 2
 store.dispatch({ type: 'DECREMENT' })
 // 1
+
+function storeUser(state = {}, action){
+  switch (action.type) {
+    case 'setToken':
+      state.token = action.data
+    case 'setUser':
+      state.user = action.data
+  }
+  
+  return state;
+}
+
+let userStore = createStore(storeUser)
+
+module.exports.userStore = userStore
