@@ -43,6 +43,8 @@ function storeUser(state = {}, action){
       state.token = action.data
     case 'setUser':
       state.user = action.data
+    case 'setFollowing':
+      state.following = action.data
   }
   
   return state;

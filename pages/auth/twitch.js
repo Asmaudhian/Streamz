@@ -85,7 +85,7 @@ async function getUserData(params) {
     let streamers = await fetch('https://api.twitch.tv/helix/users?' + streamString, {
         method: 'GET',
         headers: {
-            'Accept': 'application/vnd.twitchtv.v5+json',
+            'Accept': 'application/vnd.twitchtv.v5+json', 
             'Authorization': 'Bearer ' + userAccessJson.access_token
         },
         mode: 'cors',
@@ -93,6 +93,14 @@ async function getUserData(params) {
     })
     let streamersJson = await streamers.json()
     console.log(streamersJson)
+    streamsJson.data.map((stream, i) => {
+        stream.profile_image = streamersJson.data[i].profile_image_url
+    })
+    try {
+        store.userStore.dispatch({data: streamsJson.data, type: 'setFollowing'});
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 const Twitch = props => {

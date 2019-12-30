@@ -18,7 +18,7 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 import StreamSmall from './streamsmall'
 import apiKeys from '../apiKey'
-
+import store from '../redux'
 
 const drawerWidth = 240;
 
@@ -52,10 +52,13 @@ function connectTwitch() {
     open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=' + apiKeys.twitch + '&redirect_uri=http://localhost:3000/auth/twitch&scope=user_read')
 }
 
-
 export default function Layout(props) {
+    const [following, setFollowing] = React.useState([]);
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
+    store.userStore.subscribe(() => {
+        console.log('_____________________________________________________________________')
+        setFollowing(store.userStore.getState())
+    })
     const theme = React.useMemo(
         () =>
             createMuiTheme({
@@ -88,22 +91,15 @@ export default function Layout(props) {
                                 <ListItemText primary={text} />
                             </ListItem>
                         ))} */}
-                        <StreamSmall></StreamSmall>
-                        <StreamSmall></StreamSmall>
-                        <StreamSmall></StreamSmall>
+                        {following.map(stream => {
+                            <StreamSmall></StreamSmall>
+                        })}
                     </List>
                     <Divider />
                     <List>
-                        {/* {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))} */}
                         <ListItem button onClick={connectTwitch}>
                             <ListItemIcon><InboxIcon /></ListItemIcon>
                             <ListItemText primary={'Connect with Twitch'} />
-                            {/* https://dev.twitch.tv/docs/authentication/getting-tokens-oidc/#oidc-implicit-code-flow */}
                         </ListItem>
                     </List>
                 </Drawer>
