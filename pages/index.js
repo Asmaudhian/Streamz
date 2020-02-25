@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
+// import useState from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Layout from '../components/layout'
 import GameCard from '../components/gamecard'
@@ -13,16 +15,6 @@ const useStyles = makeStyles(theme => ({
     },
     toolbarTitle: {
         flex: 1
-    },
-    mainFeaturedPost: {
-        position: 'relative',
-        backgroundColor: theme.palette.grey[800],
-        color: theme.palette.common.white,
-        marginBottom: theme.spacing(4),
-        backgroundImage: 'url(https://source.unsplash.com/user/erondu)',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center'
     },
     overlay: {
         position: 'absolute',
@@ -53,26 +45,26 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         width: '100%',
         flexWrap: 'wrap',
+    },
+    loadMore: {
+        textAlign: 'center',
+        marginBottom: 15
     }
 }))
 
-const featuredPosts = [
-    {
-        title: 'Featured post',
-        date: 'Nov 12',
-        description:
-            'This is a wider card with supporting text below as a natural lead-in to additional content.'
-    },
-    {
-        title: 'Post title',
-        date: 'Nov 11',
-        description:
-            'This is a wider card with supporting text below as a natural lead-in to additional content.'
-    }
-]
+var gamesOffsets = 0
 
 const Index = (props) => {
+    const [gameList, setGames] = (props.games !== undefined) ? useState(props.games) : useState([])
     const classes = useStyles()
+
+    async function loadMoreGames(){
+        gamesOffsets += 100
+        let games = await fetch('http://localhost:3030/topgames/' + gamesOffsets)
+        let gamesJson = await games.json()
+        setGames(gameList.concat(gamesJson.data))
+    }
+
     console.log(props)
     return (
         <>
@@ -81,11 +73,14 @@ const Index = (props) => {
                 <div>
                     <h1>Browse</h1>
                     <div className={classes.gamesDirectory}>
-                        {props.games.map(game => (
+                        {gameList.map(game => (
                             <div key={game.game._id}>
                                 <GameCard game={game}></GameCard>
                             </div>
                         ))}
+                    </div>
+                    <div className={classes.loadMore}>
+                        <Button onClick={loadMoreGames} variant="contained" color="primary">Load more</Button>
                     </div>
                 </div>
             </Layout>
@@ -93,20 +88,16 @@ const Index = (props) => {
     )
 }
 
+async function refreshGames(){
+    console.log('fnkoeaz')
+}
+
 Index.getInitialProps = async function () {
-    let games = await fetch('https://api.twitch.tv/kraken/games/top?limit=50&client_id=' + apiKeys.twitch,
-        {
-            method: 'GET',
-            headers: {
-                'Client-ID': apiKeys.twitch,
-                'Accept': 'application/vnd.twitchtv.v5+json'
-            },
-            mode: 'cors',
-            cache: 'default'
-        });
+    let games = await fetch('http://localhost:3030/topgames/0');
     let gamesJson = await games.json();
-    console.log(gamesJson)
-    return { games: gamesJson.top };
+    // console.log(gamesJson)
+    refreshGames()
+    return { games: gamesJson.data };
 };
 
 export default Index;

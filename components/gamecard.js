@@ -21,6 +21,9 @@ const useStyles = makeStyles({
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis'
+    },
+    links: {
+        textDecoration: 'none'
     }
 });
 
@@ -29,23 +32,25 @@ export default function GameCard(props) {
     let game = props.game;
     return (
         <Link href={{ pathname: "/game/[id]", query: { gameName: game.game.localized_name } }} as={`/game/${game.game._id}`}>
-            <Card className={classes.card}>
-                <CardActionArea>
-                    <CardMedia
-                        className={classes.media}
-                        image={game.game.box.large}
-                        title={game.game.localized_name}
-                    />
-                    <CardContent>
-                        <Typography className={classes.gameTitle} gutterBottom variant="subtitle1" component="h2">
-                            {game.game.localized_name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {game.viewers} viewers
+            <a className={classes.links} title={game.game.localized_name}>
+                <Card className={classes.card}>
+                    <CardActionArea>
+                        <CardMedia
+                            className={classes.media}
+                            image={game.game.box.large}
+                            title={game.game.localized_name}
+                        />
+                        <CardContent>
+                            <Typography className={classes.gameTitle} gutterBottom variant="subtitle1" component="h2">
+                                {game.game.localized_name}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                {game.viewers} viewers
           </Typography>
-                    </CardContent>
-                </CardActionArea>
-            </Card>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </a>
         </Link>
     );
 }

@@ -33,6 +33,9 @@ const useStyles = makeStyles({
         paddingTop: 4,
         paddingBottom: 4,
         borderRadius: 20
+    },
+    links: {
+        textDecoration: 'none'
     }
 });
 
@@ -42,25 +45,27 @@ export default function StreamCard(props) {
     let first = stream.thumbnail_url.replace('{width}', '300');
     let second = first.replace('{height}', '180');
     return (
-        <Link href={{pathname: "/stream/[id]", query: {streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title}}} as={`/stream/${stream.user_name}`}>
-            <Card className={classes.card}>
-                <CardActionArea>
-                    <CardMedia
-                        className={classes.media}
-                        image={second}
-                        title={stream.title}
-                    />
-                    <div className={classes.viewerCount}>{stream.viewer_count} viewers</div>
-                    <CardContent>
-                        <Typography className={classes.streamTitle} gutterBottom variant="subtitle1" component="h2">
-                            {stream.title}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {stream.user_name}
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-            </Card>
+        <Link href={{ pathname: "/stream/[id]", query: { streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title } }} as={`/stream/${stream.user_name}`}>
+            <a className={classes.links} title={stream.user_name}>
+                <Card className={classes.card}>
+                    <CardActionArea>
+                        <CardMedia
+                            className={classes.media}
+                            image={second}
+                            title={stream.title}
+                        />
+                        <div className={classes.viewerCount}>{stream.viewer_count} viewers</div>
+                        <CardContent>
+                            <Typography className={classes.streamTitle} gutterBottom variant="subtitle1" component="h2">
+                                {stream.title}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                {stream.user_name}
+                            </Typography>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </a>
         </Link>
     );
 }
