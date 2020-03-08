@@ -34,7 +34,7 @@ const Game = props => {
             <Layout>
                 <div className={classes.streamLayout}>
                     <h1>{props.stream.user_name}</h1>
-                    <iframe src={"https://player.twitch.tv/?channel=" + props.stream.user_name + '&muted=false'} className={classes.stream} frameborder="0" allowfullscreen="true" scrolling="no" autoplay="true"></iframe>
+                    <iframe src={"https://player.twitch.tv/?channel=" + props.stream.user_name + '&muted=false'} className={classes.stream} frameBorder="0" allowFullScreen={true} scrolling="no" autoPlay={true}></iframe>
                     <iframe src={"https://www.twitch.tv/embed/" + props.stream.user_name + "/chat?darkpopout"} className={classes.chat} frameborder="0" scrolling="no"></iframe>
                     {/* <h2>{props.stream.title}</h2> */}
                     <Typography className={classes.streamTitle} gutterBottom variant="h6" component="h2">

@@ -55,10 +55,11 @@ function connectTwitch() {
 export default function Layout(props) {
     const [following, setFollowing] = React.useState([]);
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-    store.userStore.subscribe(() => {
-        console.log('_____________________________________________________________________')
-        setFollowing(store.userStore.getState())
-    })
+    // console.log(store.userStore.getState())
+    // store.userStore.subscribe(() => {
+    //     // console.log(store.userStore.getState())
+    //     setFollowing(store.userStore.getState())
+    // })
     const theme = React.useMemo(
         () =>
             createMuiTheme({

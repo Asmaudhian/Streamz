@@ -8,6 +8,8 @@ import GameCard from '../components/gamecard'
 import apiKeys from '../apiKey'
 import fetch from 'isomorphic-unfetch'
 // import 'typeface-roboto'
+import { connect } from 'react-redux';
+import { decrementCounter, incrementCounter } from '../redux/actions/counterActions';
 
 const useStyles = makeStyles(theme => ({
     toolbar: {
@@ -55,14 +57,44 @@ const useStyles = makeStyles(theme => ({
 var gamesOffsets = 0
 
 const Index = (props) => {
-    const [gameList, setGames] = (props.games !== undefined) ? useState(props.games) : useState([])
+    // console.log(props)
+    const [gameListByOffset, setGameListOffset] = (props.games !== undefined) ? useState({ 0: props.games }) : useState({})
+    const [gameList, setGames] = (props.games.data !== undefined) ? useState(props.games.data) : useState([])
     const classes = useStyles()
 
-    async function loadMoreGames(){
+    async function loadMoreGames() {
         gamesOffsets += 100
         let games = await fetch('http://localhost:3030/topgames/' + gamesOffsets)
         let gamesJson = await games.json()
-        setGames(gameList.concat(gamesJson.data))
+        let temp = { ...gameListByOffset, [gamesOffsets]: gamesJson }
+        checkTopGames(temp, gamesOffsets)
+        setGameListOffset(temp)
+        // setGames(gameList.concat(gamesJson.data))
+    }
+
+    function checkTopGames(gameListParam, offset) {
+        console.log(gameListParam)
+        let offsetArray = Object.keys(gameListParam)
+        for (let i = 0; i < gameListParam[offset].data.length; i++) {
+            let newGame = gameListParam[offset].data[i]
+            for (let oldOffsets of offsetArray) {
+                if (parseInt(oldOffsets) !== parseInt(offset)) {
+                    for (let j = 0; j < gameListParam[oldOffsets].data.length; j++) {
+                        let oldGame = gameListParam[oldOffsets].data[j]
+                        if (newGame.game._id === oldGame.game._id) {
+                            console.log(newGame.game.name + ' == ' + oldGame.game.name, " MOVED POSITION !")
+                            if (gameListParam[offset].timestamp > gameListParam[oldOffsets].timestamp) {
+                                console.log(gameListParam[oldOffsets].data[j])
+                                gameListParam[oldOffsets].data.splice(j, 1)
+                            } else {
+                                console.log(gameListParam[offset].data[i])
+                                gameListParam[offset].data.splice(i, 1)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     console.log(props)
@@ -73,14 +105,29 @@ const Index = (props) => {
                 <div>
                     <h1>Browse</h1>
                     <div className={classes.gamesDirectory}>
-                        {gameList.map(game => (
+                        {/* {gameList.map(game => (
                             <div key={game.game._id}>
                                 <GameCard game={game}></GameCard>
                             </div>
-                        ))}
+                        ))} */}
+                        {Object.values(gameListByOffset).map((offset) => {
+                            return (
+                                offset.data.map(game => (
+                                    <div key={game.game._id}>
+                                        <GameCard game={game}></GameCard>
+                                    </div>
+                                ))
+                            )
+                        })
+                        }
                     </div>
                     <div className={classes.loadMore}>
                         <Button onClick={loadMoreGames} variant="contained" color="primary">Load more</Button>
+                    </div>
+                    <div>
+                        <button onClick={props.incrementCounter}>Increment</button>
+                        <button onClick={props.decrementCounter}>Decrement</button>
+                        <h1>{props.counter}</h1>
                     </div>
                 </div>
             </Layout>
@@ -88,16 +135,26 @@ const Index = (props) => {
     )
 }
 
-async function refreshGames(){
+async function refreshGames() {
     console.log('fnkoeaz')
 }
 
-Index.getInitialProps = async function () {
+Index.getInitialProps = async function ({store, isServer, pathname, query}) {
     let games = await fetch('http://localhost:3030/topgames/0');
     let gamesJson = await games.json();
     // console.log(gamesJson)
+    console.log(store.getState())
     refreshGames()
-    return { games: gamesJson.data };
+    return { games: gamesJson };
 };
 
-export default Index;
+const mapStateToProps = state => ({
+    counter: state.counter.value
+});
+
+const mapDispatchToProps = {
+    incrementCounter: incrementCounter,
+    decrementCounter: decrementCounter,
+};
+
+export default connect()(Index);
