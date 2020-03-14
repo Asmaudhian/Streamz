@@ -4,22 +4,18 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Typography from '@material-ui/core/Typography'
 import { withRouter, useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
-import store from '../../redux'
+import { connect } from 'react-redux';
+import { setData, resetData } from '../../redux/actions/userDataActions';
 
 const useStyles = makeStyles(theme => ({
 
 }))
 
-async function getUserData(params) {
+async function getUserData(params, store) {
     let userAccess = await fetch('http://localhost:3030/auth/twitch?code=' + params.code)
     let userAccessJson = await userAccess.json();
-    try {
-        store.userStore.dispatch({data: userAccessJson, type: 'setToken'});
-    } catch (e) {
-        console.log(e)
-    }
-    
-    // console.log(userAccessJson.access_token)
+ 
+    console.log(userAccessJson.access_token)
 
     let user = await fetch('https://api.twitch.tv/helix/users', {
         method: 'GET',
@@ -31,11 +27,6 @@ async function getUserData(params) {
         cache: 'default'
     })
     let userJson = await user.json()
-    try {
-        store.userStore.dispatch({data: userJson.data[0], type: 'setUser'});
-    } catch (e) {
-        console.log(e)
-    }
 
     let follows = await fetch('https://api.twitch.tv/helix/users/follows?first=100&from_id=' + userJson.data[0].id, {
         method: 'GET',
@@ -52,7 +43,7 @@ async function getUserData(params) {
     let followString = ''
     let followLength = followsJson.data.length
     followsJson.data.map((follow, i) => {
-        if (followLength !== i + 1){
+        if (followLength !== i + 1) {
             followString += ('user_id=' + follow.to_id + '&')
         } else {
             followString += ('user_id=' + follow.to_id)
@@ -75,7 +66,7 @@ async function getUserData(params) {
     let streamsLength = streamsJson.data.length
     let streamString = ''
     streamsJson.data.map((stream, i) => {
-        if (streamsLength !== i + 1){
+        if (streamsLength !== i + 1) {
             streamString += ('id=' + stream.user_id + '&')
         } else {
             streamString += ('id=' + stream.user_id)
@@ -85,7 +76,7 @@ async function getUserData(params) {
     let streamers = await fetch('https://api.twitch.tv/helix/users?' + streamString, {
         method: 'GET',
         headers: {
-            'Accept': 'application/vnd.twitchtv.v5+json', 
+            'Accept': 'application/vnd.twitchtv.v5+json',
             'Authorization': 'Bearer ' + userAccessJson.access_token
         },
         mode: 'cors',
@@ -96,18 +87,14 @@ async function getUserData(params) {
     streamsJson.data.map((stream, i) => {
         stream.profile_image = streamersJson.data[i].profile_image_url
     })
-    try {
-        store.userStore.dispatch({data: streamsJson.data, type: 'setFollowing'});
-    } catch (e) {
-        console.log(e)
-    }
+
+    return streamsJson.data
+    // decrementCounter()
+    // store.dispatch(setData('streamsJson.data'))
 }
 
 const Twitch = props => {
     const classes = useStyles()
-    const { router } = props
-    // console.log(router)
-    // getUserData(router.query)
     return (
         <>
             <CssBaseline />
@@ -117,17 +104,20 @@ const Twitch = props => {
     )
 };
 
-Twitch.getInitialProps = async function (context) {
-    console.log(context)
-    getUserData(context.query)
-    // return {
-    //     stream: {
-    //         user_name: context.query.streamer,
-    //         title: context.query.title,
-    //         viewer_count: context.query.viewers
-    //     }
-    // };
-    return { context: null }
+Twitch.getInitialProps = async function ({ store, isServer, pathname, query }) {
+    let userdata = await getUserData(query, store)
+    store.dispatch(setData(userdata))
+    return { context: query }
 };
 
-export default withRouter(Twitch);
+const mapStateToProps = state => ({
+    userData: state.userData.data,
+    counter: state.counter.value
+});
+
+const mapDispatchToProps = {
+    setData: setData,
+    resetData: resetData,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Twitch);

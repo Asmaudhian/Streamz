@@ -148,13 +148,4 @@ Index.getInitialProps = async function ({store, isServer, pathname, query}) {
     return { games: gamesJson };
 };
 
-const mapStateToProps = state => ({
-    counter: state.counter.value
-});
-
-const mapDispatchToProps = {
-    incrementCounter: incrementCounter,
-    decrementCounter: decrementCounter,
-};
-
 export default connect()(Index);

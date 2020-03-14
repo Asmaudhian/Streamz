@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
 import AppBar from '@material-ui/core/AppBar'
@@ -17,8 +18,9 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { ThemeProvider } from '@material-ui/core/styles'
 import { createMuiTheme } from '@material-ui/core/styles'
 import StreamSmall from './streamsmall'
+import { setData, resetData } from '../redux/actions/userDataActions';
+import {decrementCounter, incrementCounter} from '../redux/actions/counterActions';
 import apiKeys from '../apiKey'
-import store from '../redux'
 
 const drawerWidth = 240;
 
@@ -51,15 +53,10 @@ function connectTwitch() {
     // DO THIS IN BACKEND
     open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=' + apiKeys.twitch + '&redirect_uri=http://localhost:3000/auth/twitch&scope=user_read')
 }
-
-export default function Layout(props) {
-    const [following, setFollowing] = React.useState([]);
+// const Twitch = props =>
+const Layout = props => {
+    const [following, setFollowing] = (props.userData !== undefined) ? useState(props.userData) : useState([])
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-    // console.log(store.userStore.getState())
-    // store.userStore.subscribe(() => {
-    //     // console.log(store.userStore.getState())
-    //     setFollowing(store.userStore.getState())
-    // })
     const theme = React.useMemo(
         () =>
             createMuiTheme({
@@ -93,7 +90,7 @@ export default function Layout(props) {
                             </ListItem>
                         ))} */}
                         {following.map(stream => {
-                            <StreamSmall></StreamSmall>
+                            return <StreamSmall stream={stream}></StreamSmall>
                         })}
                     </List>
                     <Divider />
@@ -103,6 +100,11 @@ export default function Layout(props) {
                             <ListItemText primary={'Connect with Twitch'} />
                         </ListItem>
                     </List>
+                    <div>
+                        {/* <button onClick={props.incrementCounter}>Increment</button>
+                        <button onClick={props.decrementCounter}>Decrement</button> */}
+                        {/* <h1>{props.userData}</h1> */}
+                    </div>
                 </Drawer>
                 <div className={classes.content}>
                     {/* <div className={classes.toolbar} /> */}
@@ -121,4 +123,20 @@ export default function Layout(props) {
             </div>
         </ThemeProvider>
     );
+
+
 }
+
+const mapStateToProps = state => ({
+    userData: state.userData.data,
+    counter: state.counter.value
+});
+
+const mapDispatchToProps = {
+    setData: setData,
+    resetData: resetData,
+    incrementCounter: incrementCounter,
+    decrementCounter: decrementCounter,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);
