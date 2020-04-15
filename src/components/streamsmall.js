@@ -1,12 +1,12 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import Link from 'next/link'
+import {
+    Link,
+  } from "react-router-dom";
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
-import ImageIcon from '@material-ui/icons/Image'
 
 const useStyles = makeStyles({
     streamCard: {
@@ -37,8 +37,8 @@ export default function StreamSmall(props) {
     console.log(props)
     return (
         // <Link href="/">
-        <Link href={{ pathname: "/stream/[id]", query: { streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title } }} as={`/stream/${stream.user_name}`}>
-            <a className={classes.streamlink}>
+        // href={{ pathname: "/stream/[id]", query: { streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title } }}
+        <Link to={`/stream/${stream.user_id}`}>
                 <ListItem className={classes.streamCard} button>
                     <ListItemAvatar>
                         <Avatar>
@@ -47,8 +47,6 @@ export default function StreamSmall(props) {
                     </ListItemAvatar>
                     <ListItemText primary={stream.user_name} secondary={'🔴 ' + stream.viewer_count} />
                 </ListItem>
-            </a>
-
         </Link>
     );
 }

@@ -1,6 +1,6 @@
 import {SET_DATA, RESET_DATA} from '../actions/userDataActions';
 
-const userDataReducer = (state = {test: ''}, action) => {
+const userDataReducer = (state = { data: []}, action) => {
     console.log(action)
     switch (action.type) {
         case SET_DATA:

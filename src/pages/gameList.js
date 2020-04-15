@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 // import useState from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -56,19 +56,36 @@ const useStyles = makeStyles(theme => ({
 
 var gamesOffsets = 0
 
-const Index = (props) => {
+const GameList = (props) => {
     // console.log(props)
-    const [gameListByOffset, setGameListOffset] = (props.games !== undefined) ? useState({ 0: props.games }) : useState({})
-    const [gameList, setGames] = (props.games.data !== undefined) ? useState(props.games.data) : useState([])
+    // const [gameListByOffset, setGameListOffset] = (props.games !== undefined) ? useState({ 0: props.games }) : useState({})
+    const [games, setGames] = useState({})
     const classes = useStyles()
+
+    useEffect(() => {
+        async function fetchData() {
+            let initialGames = await fetch('http://localhost:3030/topgames/0');
+            let gamesJson = await initialGames.json();
+            console.log(gamesJson)
+            refreshGames()
+            setGames({ ...games, 0: gamesJson })
+        }
+        fetchData();
+    }, []);
+
+    async function refreshGames() {
+        console.log('fnkoeaz')
+    }
 
     async function loadMoreGames() {
         gamesOffsets += 100
-        let games = await fetch('http://localhost:3030/topgames/' + gamesOffsets)
-        let gamesJson = await games.json()
-        let temp = { ...gameListByOffset, [gamesOffsets]: gamesJson }
+        let newGames = await fetch('http://localhost:3030/topgames/' + gamesOffsets)
+        let gamesJson = await newGames.json()
+        let temp = { ...games, [gamesOffsets]: gamesJson }
         checkTopGames(temp, gamesOffsets)
-        setGameListOffset(temp)
+        console.log(temp)
+        console.log(games)
+        setGames(temp)
         // setGames(gameList.concat(gamesJson.data))
     }
 
@@ -97,55 +114,29 @@ const Index = (props) => {
         }
     }
 
-    console.log(props)
     return (
         <>
             <CssBaseline />
-            <Layout>
-                <div>
-                    <h1>Browse</h1>
-                    <div className={classes.gamesDirectory}>
-                        {/* {gameList.map(game => (
-                            <div key={game.game._id}>
-                                <GameCard game={game}></GameCard>
-                            </div>
-                        ))} */}
-                        {Object.values(gameListByOffset).map((offset) => {
-                            return (
-                                offset.data.map(game => (
-                                    <div key={game.game._id}>
-                                        <GameCard game={game}></GameCard>
-                                    </div>
-                                ))
-                            )
-                        })
-                        }
-                    </div>
-                    <div className={classes.loadMore}>
-                        <Button onClick={loadMoreGames} variant="contained" color="primary">Load more</Button>
-                    </div>
-                    <div>
-                        <button onClick={props.incrementCounter}>Increment</button>
-                        <button onClick={props.decrementCounter}>Decrement</button>
-                        <h1>{props.counter}</h1>
-                    </div>
+            <div>
+                <h1>Browse</h1>
+                <div className={classes.gamesDirectory}>
+                    {Object.values(games).map((offset) => {
+                        return (
+                            offset.data.map(game => (
+                                <div key={game.game._id}>
+                                    <GameCard game={game}></GameCard>
+                                </div>
+                            ))
+                        )
+                    })
+                    }
                 </div>
-            </Layout>
+                <div className={classes.loadMore}>
+                    <Button onClick={loadMoreGames} variant="contained" color="primary">Load more</Button>
+                </div>
+            </div>
         </>
     )
 }
 
-async function refreshGames() {
-    console.log('fnkoeaz')
-}
-
-Index.getInitialProps = async function ({store, isServer, pathname, query}) {
-    let games = await fetch('http://localhost:3030/topgames/0');
-    let gamesJson = await games.json();
-    // console.log(gamesJson)
-    console.log(store.getState())
-    refreshGames()
-    return { games: gamesJson };
-};
-
-export default connect()(Index);
+export default GameList;

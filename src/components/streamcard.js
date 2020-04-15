@@ -5,7 +5,14 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
-import Link from 'next/link'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch,
+    useParams
+} from "react-router-dom";
 
 const useStyles = makeStyles({
     card: {
@@ -45,8 +52,8 @@ export default function StreamCard(props) {
     let first = stream.thumbnail_url.replace('{width}', '300');
     let second = first.replace('{height}', '180');
     return (
-        <Link href={{ pathname: "/stream/[id]", query: { streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title } }} as={`/stream/${stream.user_name}`}>
-            <a className={classes.links} title={stream.user_name}>
+        // href={{ pathname: "/stream/[id]", query: { streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title } }} 
+        <Link to={`/stream/${stream.user_id}`}>
                 <Card className={classes.card}>
                     <CardActionArea>
                         <CardMedia
@@ -65,7 +72,6 @@ export default function StreamCard(props) {
                         </CardContent>
                     </CardActionArea>
                 </Card>
-            </a>
         </Link>
     );
 }
