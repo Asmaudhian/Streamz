@@ -13,22 +13,25 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
+var streamsOffset = 0 
+
 const StreamList = props => {
     const classes = useStyles()
     const [streams, setStreams] = useState([])
-
+    console.log(props)
     useEffect(() => {
         async function fetchData(){
-            let initialStreams = await fetch('https://api.twitch.tv/helix/streams?game_id=' + props.match.params.gameId + '&client_id=' + apiKeys.twitch,
-            {
-                method: 'GET',
-                headers: {
-                    'Client-ID': apiKeys.twitch,
-                    'Accept': 'application/vnd.twitchtv.v5+json'
-                },
-                mode: 'cors',
-                cache: 'default'
-            });
+            // let initialStreams = await fetch('https://api.twitch.tv/helix/streams?game_id=' + props.match.params.gameId + '&client_id=' + apiKeys.twitch,
+            // {
+            //     method: 'GET',
+            //     headers: {
+            //         'Client-ID': apiKeys.twitch,
+            //         'Accept': 'application/vnd.twitchtv.v5+json'
+            //     },
+            //     mode: 'cors',
+            //     cache: 'default'
+            // });
+            let initialStreams = await fetch('http://localhost:3030/streams?gameId=' + props.match.params.gameId + '&offset=0')
             let streamsJson = await initialStreams.json();
             console.log(streamsJson)
             setStreams(streams.concat(streamsJson.data))

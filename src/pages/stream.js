@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     },
     stream: {
         width: 'calc(100% - 300px)',
-        height: '83%',
+        height: 745,
         marginLeft: -40
     },
     streamTitle: {
