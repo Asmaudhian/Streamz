@@ -66,8 +66,6 @@ const Layout = props => {
         // DO THIS IN BACKEND
         let url = 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=' + apiKeys.twitch + '&redirect_uri=http://localhost:3000/auth/twitch&scope=user_read'
         window.location.href = url;
-        // history.push()
-        // window.open()
     }
 
     return (

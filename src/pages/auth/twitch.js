@@ -4,6 +4,7 @@ import fetch from 'isomorphic-unfetch'
 import { setData, resetData } from '../../redux/actions/userDataActions';
 import React, { useState, useEffect } from 'react'
 import store from '../../redux/store'
+import apiKeys from '../../apiKey'
 import {
     useLocation,
     useHistory 
@@ -26,28 +27,31 @@ const Twitch = props => {
     }, [])
 
     async function getUserData(code, store) {
+        console.log(code)
         let userAccess = await fetch('http://localhost:3030/auth/twitch?code=' + code)
         let userAccessJson = await userAccess.json();
 
-        console.log(userAccessJson.access_token)
+        console.log(userAccessJson)
 
         let user = await fetch('https://api.twitch.tv/helix/users', {
             method: 'GET',
             headers: {
                 'Accept': 'application/vnd.twitchtv.v5+json',
-                'Authorization': 'Bearer ' + userAccessJson.access_token
+                'Authorization': 'Bearer ' + userAccessJson.access_token,
+                'client-id': apiKeys.twitch
             },
             mode: 'cors',
             cache: 'default'
         })
         let userJson = await user.json()
-
+        console.log(userJson)
         let follows = await fetch('https://api.twitch.tv/helix/users/follows?first=100&from_id=' + userJson.data[0].id, {
             method: 'GET',
             headers: {
                 // 'Client-ID': '',
                 'Accept': 'application/vnd.twitchtv.v5+json',
-                'Authorization': 'Bearer ' + userAccessJson.access_token
+                'Authorization': 'Bearer ' + userAccessJson.access_token,
+                'client-id': apiKeys.twitch
             },
             mode: 'cors',
             cache: 'default'
@@ -69,7 +73,8 @@ const Twitch = props => {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/vnd.twitchtv.v5+json',
-                    'Authorization': 'Bearer ' + userAccessJson.access_token
+                    'Authorization': 'Bearer ' + userAccessJson.access_token,
+                    'client-id': apiKeys.twitch
                 },
                 mode: 'cors',
                 cache: 'default'
@@ -91,7 +96,8 @@ const Twitch = props => {
             method: 'GET',
             headers: {
                 'Accept': 'application/vnd.twitchtv.v5+json',
-                'Authorization': 'Bearer ' + userAccessJson.access_token
+                'Authorization': 'Bearer ' + userAccessJson.access_token,
+                'client-id': apiKeys.twitch
             },
             mode: 'cors',
             cache: 'default'

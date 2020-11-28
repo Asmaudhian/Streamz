@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Typography from '@material-ui/core/Typography'
 import apiKeys from '../apiKey'
+import store from '../redux/store'
 
 const useStyles = makeStyles(theme => ({
     chat: {
@@ -48,7 +49,8 @@ const Stream = props => {
             let streamInformations = streamInfoJson.data[0]
             setStream(streamInformations)
         }
-        fetchData()
+        console.log(store.getState())
+        // fetchData()
     }, [])
 
     return (
@@ -56,14 +58,14 @@ const Stream = props => {
             <CssBaseline />
             <div className={classes.streamLayout}>
                 <h1>{stream.user_name}</h1>
-                <iframe src={"https://player.twitch.tv/?channel=" + stream.user_name + '&muted=false'} className={classes.stream} frameBorder="0" allowFullScreen={true} scrolling="no" autoPlay={true}></iframe>
-                <iframe src={"https://www.twitch.tv/embed/" + stream.user_name + "/chat?darkpopout"} className={classes.chat} frameBorder="0" scrolling="no"></iframe>
+                <iframe src={"https://player.twitch.tv/?channel=" + 'sjokz' + '&muted=false'} className={classes.stream} frameBorder="0" allowFullScreen={true} scrolling="no" autoPlay={true}></iframe>
+                <iframe src={"https://www.twitch.tv/embed/" + 'sjokz' + "/chat?darkpopout"} className={classes.chat} frameBorder="0" scrolling="no"></iframe>
                 {/* <h2>{props.stream.title}</h2> */}
                 <Typography className={classes.streamTitle} gutterBottom variant="h6" component="h2">
-                    {stream.title}
+                    {'GRIND BACK TO GOLD'}
                 </Typography>
                 <Typography className={classes.streamTitle} gutterBottom variant="subtitle1" component="h6">
-                    {stream.viewer_count} viewers
+                    {'1 376'} viewers
                     </Typography>
             </div>
         </>

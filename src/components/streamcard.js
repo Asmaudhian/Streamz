@@ -49,8 +49,9 @@ const useStyles = makeStyles({
 export default function StreamCard(props) {
     const classes = useStyles();
     let stream = props.stream;
-    let first = stream.thumbnail_url.replace('{width}', '300');
-    let second = first.replace('{height}', '180');
+    // let first = stream.thumbnail_url.replace('{width}', '300');
+    // let second = first.replace('{height}', '180');
+    console.log(stream)
     return (
         // href={{ pathname: "/stream/[id]", query: { streamer: stream.user_name, viewers: stream.viewer_count, title: stream.title } }} 
         <Link to={`/stream/${stream.user_id}`}>
@@ -58,16 +59,16 @@ export default function StreamCard(props) {
                     <CardActionArea>
                         <CardMedia
                             className={classes.media}
-                            image={second}
+                            image={stream.preview.large}
                             title={stream.title}
                         />
-                        <div className={classes.viewerCount}>{stream.viewer_count} viewers</div>
+                        <div className={classes.viewerCount}>{stream.viewers} viewers</div>
                         <CardContent>
                             <Typography className={classes.streamTitle} gutterBottom variant="subtitle1" component="h2">
-                                {stream.title}
+                                {stream.channel.status}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {stream.user_name}
+                                {stream.channel.display_name}
                             </Typography>
                         </CardContent>
                     </CardActionArea>
